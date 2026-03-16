@@ -1,13 +1,5 @@
 <div align="center">
 
-```
-╔═══════════════════════════════════════════════════════╗
-║  FBI FINGERPRINT DATABASE  //  GCPD NODE-04           ║
-║  CLASSIFICATION : RESTRICTED   AUTH : LVL-3           ║
-║  SESSION : ACTIVE              ENC  : AES-256         ║
-╚═══════════════════════════════════════════════════════╝
-```
-
 # GCPD Personnel Database
 
 **Biometric Intelligence UI — Spy Film Grade Interface**  
@@ -23,6 +15,8 @@
 ---
 
 ## 📡 Overview / 개요
+
+![Demo](demo.gif)
 
 **EN**  
 A single-file personnel viewer that replicates the kind of intelligence terminal UI seen in blockbuster spy films — think *The Dark Knight Rises*, *Mission Impossible*, *Minority Report*. Load a CSV, drop in portrait photos, and your team roster becomes a classified government database. No frameworks. No build tools. Just one HTML file.
