@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL // BIOMETRIC INTELLIGENCE SYSTEM</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=VT323&family=Oswald:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg0:#050708;--bg1:#090c0e;--bg2:#0e1214;--bg3:#131718;
+  --card:#141918;--card2:#18201e;--card3:#1d2622;
+  --cb:#233028;--cb2:#2e4038;
+  --g0:#162016;--g1:#1e3020;--g2:#305428;--g3:#4a8038;--g4:#68aa50;--gbr:#8acc68;--ghi:#aae080;
+  --a1:#6a4c10;--a2:#a87820;--a3:#d4a030;--ahi:#f0c048;
+  --r1:#3c1010;--r2:#6a1c1c;--r3:#a02828;--rhi:#cc3838;
+  --c1:#061420;--c2:#0e2840;--c3:#1c5068;--c4:#2e88aa;--c5:#50b0cc;--chi:#80d0e8;
+  --o1:#5a3008;--o2:#8a5010;--o3:#b87020;--ohi:#e09040;
+  --tx0:#142214;--tx1:#2a3e2a;--tx2:#426042;--tx3:#6a8c6a;--tx4:#96b896;--tx5:#c4d8c0;--wh:#dce8d4;
+  --mono:'Share Tech Mono',monospace;
+  --title:'Oswald',sans-serif;
+  --raj:'Rajdhani',sans-serif;
+  --vt:'VT323',monospace;
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg0);font-family:var(--mono);color:var(--tx3);font-size:13px;}
+
+/* SCANLINE */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0,rgba(0,0,0,.14) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9999;animation:sc 12s linear infinite;}
+@keyframes sc{0%{background-position:0 0}100%{background-position:0 80px}}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85) 100%);pointer-events:none;z-index:9998;}
+
+#root{display:flex;flex-direction:column;height:100vh;}
+
+/* ═══ TOP BAR ═══ */
+#topbar{height:34px;min-height:34px;background:var(--bg1);border-bottom:1px solid var(--g1);display:flex;align-items:center;}
+.tbs{padding:0 12px;height:100%;display:flex;align-items:center;border-right:1px solid var(--g0);}
+.tb-logo{font-family:var(--title);font-weight:500;font-size:14px;color:var(--tx3);letter-spacing:2px;text-transform:uppercase;}
+.tnav{padding:0 12px;height:100%;display:flex;align-items:center;font-size:11px;color:var(--tx1);cursor:pointer;border-right:1px solid var(--g0);letter-spacing:1px;text-transform:uppercase;transition:all .1s;}
+.tnav:hover,.tnav.on{color:var(--g4);background:rgba(72,128,56,.07);}
+.tr{margin-left:auto;display:flex;align-items:center;gap:12px;padding:0 12px;}
+.tchip{font-size:10px;color:var(--tx1);letter-spacing:.5px;}
+.tchip b{color:var(--g3);font-weight:400;}
+#clk{font-family:var(--vt);font-size:24px;color:var(--a2);}
+.live{width:7px;height:7px;border-radius:50%;background:var(--g4);box-shadow:0 0 6px var(--g4);animation:bl 1.8s ease-in-out infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.1}}
+
+/* ═══ SUBBAR ═══ */
+#sub{height:26px;min-height:26px;background:var(--bg0);border-bottom:2px solid var(--g1);display:flex;align-items:center;padding:0 10px;gap:16px;}
+.sdept{font-family:var(--title);font-weight:600;font-size:14px;color:var(--tx4);letter-spacing:4px;text-transform:uppercase;}
+.si2{font-size:10px;color:var(--tx1);letter-spacing:.5px;}
+.si2 b{color:var(--a2);font-weight:400;}
+
+/* ═══ MAIN ═══ */
+#main{flex:1;display:flex;overflow:hidden;}
+
+/* ── LIST ── */
+#pl{width:210px;min-width:210px;background:var(--bg1);border-right:1px solid var(--g0);display:flex;flex-direction:column;overflow:hidden;}
+.ph{padding:4px 8px;background:var(--bg2);border-bottom:1px solid var(--g0);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--tx1);letter-spacing:1px;text-transform:uppercase;}
+.ph .cn{color:var(--g4);}
+.srch{padding:4px 6px;background:var(--bg0);border-bottom:1px solid var(--g0);}
+.srch input{width:100%;background:var(--bg2);border:1px solid var(--g0);color:var(--tx4);font-family:var(--mono);font-size:11px;padding:4px 7px;outline:none;}
+.srch input:focus{border-color:var(--g2);}
+.srch input::placeholder{color:var(--tx0);}
+#sl{flex:1;overflow-y:auto;overflow-x:hidden;}
+#sl::-webkit-scrollbar{width:3px;}
+#sl::-webkit-scrollbar-thumb{background:var(--g1);}
+.si{padding:8px 8px;border-bottom:1px solid var(--bg3);cursor:pointer;transition:background .1s;display:flex;gap:7px;align-items:flex-start;border-left:2px solid transparent;}
+.si:hover{background:var(--bg2);}
+.si.sel{background:var(--bg3);border-left-color:var(--g4);}
+.snum{font-size:10px;color:var(--tx0);min-width:18px;margin-top:1px;}
+.sinf{flex:1;min-width:0;}
+.sname{font-family:var(--title);font-weight:600;font-size:15px;color:var(--tx4);letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.si.sel .sname{color:var(--gbr);}
+.smeta{font-size:10px;color:var(--tx1);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;}
+.stag{padding:2px 5px;font-size:9px;color:var(--tx1);background:var(--bg2);border:1px solid var(--g0);}
+.sbdg{font-size:9px;padding:2px 6px;background:#061206;border:1px solid var(--g1);color:var(--g3);}
+#csvz{padding:5px;border-top:1px solid var(--g0);background:var(--bg0);}
+.csvb{width:100%;padding:5px;background:var(--bg2);border:1px dashed var(--g1);color:var(--tx1);font-family:var(--mono);font-size:10px;cursor:pointer;text-align:center;letter-spacing:1px;text-transform:uppercase;transition:all .15s;}
+.csvb:hover{border-color:var(--g3);color:var(--g4);}
+
+/* ── CENTER PANEL ── */
+#pp{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg1);border-right:1px solid var(--g0);overflow:hidden;}
+.chdr{background:var(--bg2);border-bottom:2px solid var(--g1);}
+.chdrt{display:flex;align-items:center;justify-content:space-between;padding:4px 10px;border-bottom:1px solid var(--g0);background:var(--bg1);}
+.cdept{font-family:var(--title);font-weight:600;font-size:15px;color:var(--tx4);letter-spacing:3px;}
+.cwarn{font-size:10px;color:var(--tx1);}
+.cwarn b{color:var(--rhi);font-weight:400;}
+.chdrs{padding:3px 10px;display:flex;align-items:center;gap:14px;font-size:10px;color:var(--tx1);}
+.chdrs b{color:var(--a2);font-weight:400;}
+.cbody{flex:1;display:flex;overflow:hidden;}
+
+/* ══ PHOTO COLUMN - LARGE SPY ══ */
+#pcol{
+  width:300px;min-width:300px;
+  background:var(--card);border-right:1px solid var(--cb);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* The big photo frame */
+.pframe-wrap{
+  flex:1;padding:10px 10px 6px 10px;
+  display:flex;flex-direction:column;gap:6px;
+  min-height:0;
+}
+
+.pframe{
+  flex:1;min-height:0;
+  background:var(--bg0);
+  border:1px solid var(--cb2);
+  position:relative;overflow:hidden;
+}
+
+/* Actual photo */
+.pframe img{
+  width:100%;height:100%;object-fit:cover;object-position:top center;
+  display:none;
+  filter:grayscale(10%) contrast(1.08) brightness(.88) saturate(.9);
+}
+
+/* Placeholder */
+.pph{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  background:var(--bg2);
+}
+.pph .ico{font-size:60px;opacity:.08;line-height:1;}
+.pph .lbl{font-size:8px;color:var(--tx0);letter-spacing:2px;text-transform:uppercase;}
+
+/* ══ SPY HUD OVERLAY ══ */
+.hud{
+  position:absolute;inset:0;pointer-events:none;z-index:5;
+}
+
+/* Outer corner brackets - large */
+.hud-corner{
+  position:absolute;width:24px;height:24px;
+  border-color:var(--g4);border-style:solid;
+  opacity:.9;
+}
+.hud-corner.tl{top:8px;left:8px;border-width:2px 0 0 2px;}
+.hud-corner.tr{top:8px;right:8px;border-width:2px 2px 0 0;}
+.hud-corner.bl{bottom:8px;left:8px;border-width:0 0 2px 2px;}
+.hud-corner.br{bottom:8px;right:8px;border-width:0 2px 2px 0;}
+
+/* Animated pulse on corners when scanning */
+.scanning .hud-corner{animation:cpulse 1.2s ease-in-out infinite;}
+@keyframes cpulse{0%,100%{opacity:.9;width:24px;height:24px}50%{opacity:1;width:28px;height:28px}}
+
+/* Face detection box - inner */
+.face-box{
+  position:absolute;
+  /* centered for portrait: roughly top 15%-75%, left 20%-80% */
+  top:12%;left:18%;right:18%;height:55%;
+  border:1px solid rgba(104,170,80,.4);
+  opacity:0;transition:opacity .5s;
+}
+.face-box.visible{opacity:1;}
+.face-box::before,.face-box::after{
+  content:'';position:absolute;background:var(--g4);
+}
+/* top-left corner of face box */
+.fbc{position:absolute;background:var(--g4);}
+.fbc.h{width:14px;height:1.5px;}
+.fbc.v{width:1.5px;height:14px;}
+.fbc.tl-h{top:0;left:0;}
+.fbc.tl-v{top:0;left:0;}
+.fbc.tr-h{top:0;right:0;}
+.fbc.tr-v{top:0;right:0;}
+.fbc.bl-h{bottom:0;left:0;}
+.fbc.bl-v{bottom:0;left:0;}
+.fbc.br-h{bottom:0;right:0;}
+.fbc.br-v{bottom:0;right:0;}
+
+/* Center crosshair */
+.hud-cross{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  opacity:.3;
+}
+.hud-cross::before,.hud-cross::after{content:'';position:absolute;background:var(--g3);}
+.hud-cross::before{width:20px;height:1px;top:0;left:-10px;}
+.hud-cross::after{width:1px;height:20px;top:-10px;left:0;}
+
+/* Scan sweep line */
+.scan-line{
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(to right,transparent 0%,rgba(104,170,80,.08) 15%,rgba(104,170,80,.6) 50%,rgba(104,170,80,.08) 85%,transparent 100%);
+  pointer-events:none;opacity:0;
+  box-shadow:0 0 8px rgba(104,170,80,.4);
+}
+.scanning .scan-line{opacity:1;animation:sweep 2.8s linear infinite;}
+.matched .scan-line{animation:none;opacity:0;}
+@keyframes sweep{
+  0%{top:0%;opacity:0}
+  5%{opacity:1}
+  90%{opacity:1}
+  100%{top:100%;opacity:0}
+}
+
+/* Ruler left */
+.hud-ruler-l{
+  position:absolute;left:0;top:0;bottom:0;width:22px;
+  border-right:1px solid rgba(36,72,36,.6);
+  background:rgba(6,10,8,.5);
+  display:flex;flex-direction:column;justify-content:space-around;align-items:center;
+}
+.rm{font-size:8px;color:var(--tx1);letter-spacing:0;line-height:1;display:flex;flex-direction:column;align-items:center;gap:1px;}
+.rm span{width:6px;height:1px;background:var(--tx0);}
+
+/* Biometric landmark dots */
+.bio-pt{
+  position:absolute;width:5px;height:5px;border-radius:50%;
+  background:var(--g4);opacity:0;transition:opacity .3s;
+  box-shadow:0 0 4px var(--g4);
+}
+.bio-pt::before{
+  content:'';position:absolute;
+  background:rgba(104,170,80,.3);
+  border-radius:50%;
+  width:11px;height:11px;
+  top:-3px;left:-3px;
+  animation:ptpulse 2s ease-in-out infinite;
+}
+@keyframes ptpulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.4);opacity:.2}}
+.bio-pt.visible{opacity:1;}
+
+/* Landmark lines from dots */
+.bio-line{
+  position:absolute;pointer-events:none;
+  opacity:0;transition:opacity .3s;
+}
+.bio-line.visible{opacity:1;}
+
+/* Biometric data labels */
+.bio-label{
+  position:absolute;font-size:9px;color:var(--g3);
+  font-family:var(--mono);letter-spacing:.5px;white-space:nowrap;
+  opacity:0;transition:opacity .3s;
+  background:rgba(5,8,7,.75);padding:2px 4px;
+}
+.bio-label.visible{opacity:1;}
+
+/* Status text on photo */
+.hud-status{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:var(--g4);letter-spacing:2px;text-transform:uppercase;
+  font-family:var(--mono);white-space:nowrap;
+  text-shadow:0 0 8px var(--g4);
+  opacity:0;
+}
+.hud-status.vis{opacity:1;}
+
+.hud-match{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  font-size:16px;color:var(--ahi);letter-spacing:3px;text-transform:uppercase;
+  font-family:var(--vt);white-space:nowrap;
+  text-shadow:0 0 12px var(--a3);
+  opacity:0;transition:opacity .4s;
+}
+.hud-match.vis{opacity:1;}
+
+/* Top data strip on photo */
+.hud-topdata{
+  position:absolute;top:10px;left:28px;right:10px;
+  display:flex;justify-content:space-between;
+  font-size:9px;color:rgba(104,170,80,.65);
+  font-family:var(--mono);letter-spacing:.5px;
+}
+
+/* Bottom confidence bar */
+.conf-bar{
+  position:absolute;bottom:10px;left:20px;right:10px;height:5px;
+  background:rgba(0,0,0,.5);border:1px solid rgba(104,170,80,.2);
+  overflow:hidden;opacity:0;transition:opacity .3s;
+}
+.conf-bar.vis{opacity:1;}
+.conf-fill{height:100%;width:0%;background:var(--g4);box-shadow:0 0 6px var(--g4);transition:width 1.5s ease;}
+
+/* Photo caption strip */
+.pcap-strip{
+  padding:4px 10px;background:var(--bg0);border-top:1px solid var(--cb);
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+}
+.pcap-l{font-size:10px;color:var(--tx1);letter-spacing:.5px;}
+.pcap-r{font-size:10px;color:var(--g3);letter-spacing:.5px;}
+
+/* Thumb row */
+.trow{
+  padding:0 10px 10px 10px;display:flex;gap:5px;flex-shrink:0;
+}
+.th{
+  flex:1;height:56px;background:var(--bg0);
+  border:1px solid var(--cb);cursor:pointer;overflow:hidden;
+  position:relative;transition:border-color .1s;
+}
+.th:hover{border-color:var(--g3);}
+.th.on{border-color:var(--g4);}
+.thlbl{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.8);text-align:center;font-size:9px;color:var(--tx1);padding:2px;}
+.th-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg2);}
+.th-ph span{font-size:10px;color:var(--tx0);}
+
+/* ── INFO COLUMN ── */
+#icol{flex:1;min-width:0;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:6px;background:var(--card);}
+#icol::-webkit-scrollbar{width:3px;}
+#icol::-webkit-scrollbar-thumb{background:var(--g1);}
+
+.bignm{
+  font-family:var(--title);font-weight:600;
+  font-size:clamp(22px,2.2vw,32px);
+  color:var(--wh);letter-spacing:2px;text-transform:uppercase;
+  border-bottom:1px solid var(--cb);padding-bottom:6px;line-height:1.1;
+}
+.bignm span{display:block;font-size:12px;color:var(--tx2);letter-spacing:3px;font-weight:300;margin-top:3px;}
+
+/* field grid */
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid var(--cb);background:var(--cb);}
+.fc{background:var(--card2);padding:5px 7px;}
+.fc.s2{grid-column:span 2;}.fc.s3{grid-column:span 3;}
+.fl{font-size:9px;color:var(--tx1);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.fv{font-family:var(--raj);font-weight:600;font-size:15px;color:var(--tx4);letter-spacing:.3px;}
+.fv.em{color:var(--g4);}.fv.am{color:var(--a2);}.fv.rd{color:var(--rhi);}
+.blr{animation:blr 1.5s ease-in-out infinite;}
+@keyframes blr{0%,100%{opacity:1}50%{opacity:.25}}
+
+.sh{display:flex;align-items:center;gap:6px;margin:4px 0 2px;}
+.sh-t{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--tx1);white-space:nowrap;}
+.sh-l{flex:1;height:1px;background:var(--cb);}
+.sh-e{font-size:9px;color:var(--tx0);}
+
+.mbk{display:grid;grid-template-columns:90px 1fr;gap:1px;border:1px solid var(--cb);background:var(--cb);}
+.mc{background:var(--card2);padding:4px 6px;}
+
+.ht{width:100%;border-collapse:collapse;border:1px solid var(--cb);}
+.ht th{font-size:9px;color:var(--tx1);letter-spacing:.5px;text-align:left;padding:4px 7px;border-bottom:1px solid var(--cb);text-transform:uppercase;font-weight:400;background:var(--card3);}
+.ht td{font-size:11px;color:var(--tx3);padding:4px 7px;border-bottom:1px solid var(--cb);vertical-align:top;}
+.ht tr:hover td{background:var(--card3);}
+.ht td.tp{color:var(--a2);font-size:10px;}.ht td.dt{color:var(--tx1);font-size:10px;white-space:nowrap;}.ht td.cd{color:var(--g3);text-align:right;}
+
+.chg{padding:4px 9px;border-left:2px solid var(--r2);margin-bottom:3px;background:rgba(60,16,16,.08);}
+.chn{font-size:9px;color:var(--rhi);}
+.cht{font-size:11px;color:var(--tx3);line-height:1.5;}
+
+.skc{display:flex;flex-wrap:wrap;gap:4px;}
+.skt{padding:3px 8px;font-size:10px;border:1px solid var(--cb);color:var(--tx1);background:var(--card2);}
+.skt.p{border-color:var(--g1);color:var(--g3);background:rgba(48,84,40,.12);}
+
+/* EMPTY */
+#emp{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;}
+.et{font-family:var(--vt);font-size:30px;color:var(--tx0);letter-spacing:4px;}
+.es{font-size:8px;color:var(--g0);letter-spacing:2px;}
+
+/* ── RIGHT PANEL ── */
+#pr{width:280px;min-width:280px;display:flex;flex-direction:column;background:var(--bg0);overflow:hidden;}
+#fps{height:220px;min-height:220px;background:#030508;border-bottom:1px solid var(--g0);position:relative;overflow:hidden;}
+.fp-hdr{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:rgba(8,10,12,.92);border-bottom:1px solid var(--g0);z-index:2;}
+.fp-t{font-family:var(--title);font-size:12px;font-weight:500;letter-spacing:2px;color:var(--tx2);text-transform:uppercase;}
+.fp-id{font-family:var(--vt);font-size:22px;color:var(--a2);letter-spacing:2px;}
+#fpc{position:absolute;top:0;left:0;width:100%;height:100%;}
+.fp-zoom{position:absolute;bottom:6px;left:8px;font-family:var(--vt);font-size:24px;color:var(--c4);opacity:.6;}
+.fp-xy{position:absolute;bottom:6px;right:8px;font-size:9px;color:var(--c3);letter-spacing:.5px;text-align:right;line-height:1.7;}
+#sz{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:6px;gap:4px;}
+.sz-hdr{display:flex;justify-content:space-between;align-items:center;}
+.sz-t{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--tx1);}
+.sz-s{font-size:10px;color:var(--g4);}
+.prog{height:4px;background:var(--bg2);border:1px solid var(--g0);overflow:hidden;}
+.pf{height:100%;background:var(--g4);box-shadow:0 0 5px var(--g4);transition:width .4s ease;}
+#s2c{flex:1;display:flex;gap:4px;overflow:hidden;min-height:0;}
+#slog{flex:1;overflow-y:auto;font-size:9px;color:var(--tx1);line-height:1.8;background:var(--bg1);border:1px solid var(--g0);padding:4px 6px;}
+#slog::-webkit-scrollbar{width:2px;}
+#slog::-webkit-scrollbar-thumb{background:var(--g1);}
+.ll{margin-bottom:1px;}
+.ll.ok{color:var(--g3);}.ll.info{color:var(--c4);}.ll.warn{color:var(--a2);}.ll.err{color:var(--rhi);}
+#idr{width:120px;min-width:120px;display:flex;flex-direction:column;overflow:hidden;}
+.id-h{padding:3px 6px;background:var(--bg2);border:1px solid var(--g0);border-bottom:none;font-size:9px;color:var(--tx1);letter-spacing:1px;text-transform:uppercase;}
+#idrw{border:1px solid var(--g0);background:var(--bg1);flex:1;overflow-y:auto;}
+#idrw::-webkit-scrollbar{width:2px;}
+#idrw::-webkit-scrollbar-thumb{background:var(--g1);}
+.ir{display:flex;justify-content:space-between;padding:3px 6px;border-bottom:1px solid var(--bg3);font-size:9.5px;}
+.ir .lb{color:var(--tx1);font-size:8.5px;}
+.ir .vl{color:var(--tx4);}
+.ir .vl.hi{color:var(--g4);}.ir .vl.am{color:var(--a2);}
+
+/* BOTTOM */
+#btm{height:26px;min-height:26px;background:var(--bg0);border-top:1px solid var(--g0);display:flex;align-items:center;padding:0 5px;}
+.cb{padding:0 9px;height:100%;display:flex;align-items:center;font-size:10px;color:var(--tx0);cursor:pointer;border-right:1px solid var(--g0);transition:all .1s;letter-spacing:.3px;}
+.cb:hover,.cb.on{color:var(--g3);background:rgba(48,84,40,.1);}
+.bi{margin-left:10px;font-size:10px;color:var(--tx1);}
+.bi b{color:var(--a2);font-weight:400;}
+.brt{margin-left:auto;font-size:10px;color:var(--tx0);letter-spacing:.3px;}
+.brt b{color:var(--g2);font-weight:400;}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- TOP -->
+<div id="topbar">
+  <div class="tbs"><span class="tb-logo">FBI Fingerprint Database</span></div>
+  <div class="tnav on">INFO</div>
+  <div class="tnav">LOG</div>
+  <div class="tnav">ARCHIVE</div>
+  <div class="tr">
+    <div class="tchip">NODE: <b>GCPD-SRV-04</b></div>
+    <div class="tchip">AUTH: <b>LVL-3</b></div>
+    <div class="tchip">ENC: <b>AES-256</b></div>
+    <div id="clk">00:00:00</div>
+    <div class="live"></div>
+  </div>
+</div>
+
+<!-- SUBBAR -->
+<div id="sub">
+  <div class="sdept">City of Gotham Police Dept  ■</div>
+  <div class="si2">CLASSIFICATION: <b>RESTRICTED</b></div>
+  <div class="si2">UNIT: <b>DATABASE SEARCH</b></div>
+  <div class="si2" style="margin-left:auto">SESSION: <b id="sid">--</b></div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- LIST -->
+  <div id="pl">
+    <div class="ph"><span>SUBJECT LIST</span><span class="cn" id="sc">00</span></div>
+    <div class="srch"><input type="text" id="srch" placeholder="// SEARCH..." autocomplete="off"></div>
+    <div id="sl"></div>
+    <div id="csvz">
+      <div class="csvb" onclick="document.getElementById('cf').click()">▼ LOAD CSV RECORD</div>
+      <input type="file" id="cf" accept=".csv" style="display:none" onchange="loadCSV(event)">
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="pp">
+    <div class="chdr">
+      <div class="chdrt">
+        <div class="cdept">City of Gotham Police Department ■</div>
+        <div class="cwarn">RECORD: <b id="wno">-- SELECT SUBJECT --</b></div>
+      </div>
+      <div class="chdrs">
+        <span>REPORT: <b id="hloc">Gotham City</b></span>
+        <span>DEPT: <b id="hdpt">--</b></span>
+        <span style="margin-left:auto">ISSUED: <b id="his">--</b></span>
+        <span>EXPIRES: <b id="hex">--</b></span>
+      </div>
+    </div>
+
+    <div class="cbody">
+      <!-- PHOTO COLUMN - SPY LARGE -->
+      <div id="pcol">
+        <div class="pframe-wrap">
+          <!-- Main large photo frame -->
+          <div class="pframe" id="pframe">
+            <img id="pimg" alt="">
+            <div class="pph" id="pph"><div class="ico">◫</div><div class="lbl">NO PHOTO ON FILE</div></div>
+
+            <!-- SPY HUD OVERLAY -->
+            <div class="hud" id="hud">
+              <!-- Ruler left -->
+              <div class="hud-ruler-l">
+                <div class="rm"><span></span>190</div>
+                <div class="rm"><span></span>180</div>
+                <div class="rm"><span></span>170</div>
+                <div class="rm"><span></span>160</div>
+                <div class="rm"><span></span>150</div>
+              </div>
+
+              <!-- Top data strip -->
+              <div class="hud-topdata">
+                <span id="hud-ts">--:--:--</span>
+                <span id="hud-fps">FPS:60</span>
+                <span id="hud-res">4K-UHD</span>
+              </div>
+
+              <!-- Outer corner brackets -->
+              <div class="hud-corner tl"></div>
+              <div class="hud-corner tr"></div>
+              <div class="hud-corner bl"></div>
+              <div class="hud-corner br"></div>
+
+              <!-- Face detection box -->
+              <div class="face-box" id="facebox">
+                <div class="fbc h tl-h"></div><div class="fbc v tl-v"></div>
+                <div class="fbc h tr-h"></div><div class="fbc v tr-v"></div>
+                <div class="fbc h bl-h"></div><div class="fbc v bl-v"></div>
+                <div class="fbc h br-h"></div><div class="fbc v br-v"></div>
+              </div>
+
+              <!-- Center crosshair -->
+              <div class="hud-cross"></div>
+
+              <!-- Scan sweep -->
+              <div class="scan-line" id="scanline"></div>
+
+              <!-- Biometric landmark dots & labels -->
+              <!-- Left eye -->
+              <div class="bio-pt" id="pt-leye" style="top:27%;left:35%;"></div>
+              <div class="bio-label" id="lb-leye" style="top:24%;left:4%;">EYE_L<br>0.882</div>
+              <!-- Right eye -->
+              <div class="bio-pt" id="pt-reye" style="top:27%;right:28%;"></div>
+              <div class="bio-label" id="lb-reye" style="top:24%;right:2%;">EYE_R<br>0.879</div>
+              <!-- Nose -->
+              <div class="bio-pt" id="pt-nose" style="top:40%;left:48%;"></div>
+              <div class="bio-label" id="lb-nose" style="top:38%;left:4%;">NOSE<br>0.941</div>
+              <!-- Mouth -->
+              <div class="bio-pt" id="pt-mth" style="top:53%;left:46%;"></div>
+              <div class="bio-label" id="lb-mth" style="top:51%;right:2%;">MOUTH<br>0.928</div>
+              <!-- Chin -->
+              <div class="bio-pt" id="pt-chin" style="top:66%;left:49%;"></div>
+
+              <!-- Status text -->
+              <div class="hud-status" id="hud-status">SCANNING BIOMETRICS</div>
+              <div class="hud-match" id="hud-match">▶ MATCH FOUND ◀</div>
+
+              <!-- Confidence bar -->
+              <div class="conf-bar" id="confbar">
+                <div class="conf-fill" id="conffill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caption strip -->
+          <div class="pcap-strip">
+            <div class="pcap-l" id="pcap">PHOTO: --</div>
+            <div class="pcap-r" id="pcap-r">CONF: --</div>
+          </div>
+
+          <!-- Thumb row -->
+          <div class="trow" id="trow">
+            <div class="th on"><div class="th-ph"><span>정면</span></div><div class="thlbl">정면</div></div>
+            <div class="th"><div class="th-ph"><span>측면</span></div><div class="thlbl">측면</div></div>
+            <div class="th"><div class="th-ph"><span>전신</span></div><div class="thlbl">전신</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div id="icol">
+        <div id="emp">
+          <div class="et">SELECT SUBJECT</div>
+          <div class="es">▸ CHOOSE FROM SUBJECT LIST</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: SCANNER -->
+  <div id="pr">
+    <div id="fps">
+      <div class="fp-hdr">
+        <div class="fp-t">Database Search</div>
+        <div class="fp-id" id="fpid">PRINT ID/--</div>
+      </div>
+      <canvas id="fpc"></canvas>
+      <div class="fp-zoom" id="fpzoom">0-.---</div>
+      <div class="fp-xy" id="fpxy">LAT: ---.---<br>LNG: ---.---<br>ALT: ---M</div>
+    </div>
+    <div id="sz">
+      <div class="sz-hdr">
+        <div class="sz-t">Scanner Log</div>
+        <div class="sz-s" id="sst">■ IDLE</div>
+      </div>
+      <div class="prog"><div class="pf" id="pf" style="width:0"></div></div>
+      <div id="s2c">
+        <div id="slog"></div>
+        <div id="idr">
+          <div class="id-h">IDENTIFICATION RESULTS</div>
+          <div id="idrw"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM -->
+<div id="btm">
+  <div class="cb on">CH 01</div><div class="cb">CH 02</div><div class="cb">CH 03</div>
+  <div class="cb">CH 04</div><div class="cb">CH 05</div><div class="cb">CH 06</div>
+  <div class="cb">CH 07</div><div class="cb">CH 08</div>
+  <div class="bi">LONG PAD-52: <b id="bname">--</b></div>
+  <div class="brt">GCPD APPLIED SCIENCES // CLEARANCE LVL-3 // <b>AUTHORIZED PERSONNEL ONLY</b></div>
+</div>
+
+</div><!-- /root -->
+
+<script>
+/* ─── DATA ─── */
+const CSV=`name,position,department,dob,nationality,height,contact,years_exp,skills,history,projects,notes
+강도현,Principal Engineer,Systems Engineering,1983-09-12,KOR,180,dohyun.kang83@gmail.com,14,"C++,Rust,FPGA,Embedded Linux,ROS2,CUDA","2010-2013:KAIST MSRL:Research Eng,2013-2017:Hyundai Robotics:Senior Eng,2017-2021:LG Electronics:Principal Eng,2021-Present:Wavelab Inc:CTO","Autonomous Inspection Drone v2,ROS2 Migration Framework,Real-time LiDAR Fusion Engine","Hardcore systems programmer. Holds 7 patents in robotic sensor fusion. Never uses a GUI if a terminal will do."
+오세진,Lead Motion Designer,Visual Arts Division,1992-02-28,KOR,172,sejin.oh.motion@gmail.com,6,"After Effects,Cinema 4D,Houdini,Redshift,DaVinci Resolve,Octane","2018-2019:Blank Corporation:Junior Designer,2019-2021:BBDO Korea:Motion Lead,2021-2023:Netflix Korea:Title Sequence Designer,2023-Present:Neon Studio:Lead Motion","Squid Game S2 Opening Titles,Hyundai EV Brand Film,Seoul City Brand Identity 2024","Title sequence obsessive. Trained under Momoco in London. Collects vintage film stock."
+윤재원,Security Researcher,InfoSec Division,1989-11-05,KOR,176,jaewon.yoon.sec@gmail.com,9,"Reverse Engineering,IDA Pro,Ghidra,Python,Assembly,Burp Suite,Malware Analysis","2015-2017:KISA:Junior Analyst,2017-2020:Theori:Vulnerability Researcher,2020-2022:Samsung Knox:Red Team Lead,2022-Present:CryptShield:Principal Researcher","CVE-2022-31337 Discovery,Supply Chain Attack Mitigation Tool,Hardware Root-of-Trust Audit","DEF CON CTF finalist three years running. Known as 0x5UN. Communicates primarily through PRs."
+임하늘,Data Scientist,Analytics Lab,1995-06-17,KOR,164,haneul.im.data@gmail.com,4,"Python,R,dbt,Spark,Tableau,Snowflake,Statsmodels","2021-2022:Krafton:Data Analyst Intern,2022-2023:Toss:Growth Data Scientist,2023-Present:Arca Analytics:Senior Data Scientist","Player Churn Prediction Model,Real-time A/B Testing Framework,KPI Attribution Dashboard","Stats nerd who does archery competitively on weekends. Published two conference papers on causal inference."
+문성호,Interaction Designer,Product Division,1991-04-03,KOR,174,sungho.moon.ix@gmail.com,8,"Figma,Framer,Swift,Kotlin,Protopie,Lottie,WebGL","2016-2018:Kakao Design:Jr Designer,2018-2020:Naver Clova:Product Designer,2020-2022:Coupang:Principal IxD,2022-Present:Particle Studio:Design Lead","Coupang Rocket UI Redesign,Clova Waveform Visualizer,HIG-compliant Haptic Feedback Library","Believes every animation should have a purpose. Maintains a public design system with 3k GitHub stars."
+배소영,Cloud Infrastructure Lead,Platform Division,1987-08-22,KOR,167,soyoung.bae.cloud@gmail.com,11,"Terraform,Kubernetes,AWS,GCP,Prometheus,Grafana,Go,Ansible","2013-2015:SK Broadband:Ops Eng,2015-2018:NHN:DevOps Lead,2018-2021:Kakao Cloud:Infra Architect,2021-Present:Gridline Systems:VP Infrastructure","Multi-Region Failover Architecture,Cost Optimization 40pct Reduction Initiative,Zero-Downtime Migration Playbook","Runs Kubernetes clusters in her sleep. Literally gave a talk called that at KubeCon Seoul 2023."
+조민석,Game Technical Artist,Interactive Division,1994-12-09,KOR,179,minseok.cho.ta@gmail.com,5,"Unreal Engine,Houdini,HLSL,GLSL,Python,Perforce,Maya","2019-2020:Pearl Abyss:Junior TA,2020-2022:Krafton:Mid TA,2022-Present:Nebula Games:Lead Technical Artist","Procedural Foliage System for Open World RPG,Custom Subsurface Scattering Shader Pack,Pipeline Automation Tool reducing build time 60pct","Shader wizard who also sings in an indie band called NULL PTR. Streams Houdini tutorials on Twitch."
+허지안,Biomedical Imaging Researcher,Medical AI Lab,1990-07-14,KOR,163,jian.heo.mri@gmail.com,8,"PyTorch,MONAI,ITK,3D Slicer,DICOM,OpenCV,MATLAB","2016-2018:SNUH:Research Assistant,2018-2021:Siemens Healthineers:Image Processing Eng,2021-Present:MedVis AI:Lead Researcher","Brain Tumor Segmentation Pipeline v3,Low-Dose CT Denoising with Diffusion Models,Multi-modal MRI Registration Framework","Pediatric oncology imaging specialist. Volunteer radiologist on weekends. Terrifyingly good at chess."`;
+
+let subjects=[],current=null,scanTmr=null,fpRaf=null,fpPhase=26,bioTmr=null;
+
+/* ─── CSV ─── */
+function parseCSV(txt){
+  const lines=txt.trim().split('\n'),hdrs=lines[0].split(',').map(h=>h.trim());
+  return lines.slice(1).map(line=>{
+    const cols=[],obj={};let cur='',inQ=false;
+    for(const c of line){if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){cols.push(cur);cur='';}else cur+=c;}
+    cols.push(cur);
+    hdrs.forEach((h,i)=>{obj[h]=(cols[i]||'').trim().replace(/^"|"$/g,'');});
+    return obj;
+  });
+}
+function loadCSV(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{subjects=parseCSV(ev.target.result);renderList(subjects);addLog('ok',`LOADED: ${subjects.length} RECORDS FROM ${f.name.toUpperCase()}`);};
+  r.readAsText(f);
+}
+
+/* ─── LIST ─── */
+function renderList(data){
+  const ul=document.getElementById('sl');ul.innerHTML='';
+  document.getElementById('sc').textContent=String(data.length).padStart(2,'0');
+  data.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='si'+(current&&current.name===s.name?' sel':'');
+    el.onclick=()=>doSelect(s,el);
+    const sk=(s.skills||'').split(',').slice(0,2).map(t=>`<span class="stag">${t.trim()}</span>`).join('');
+    el.innerHTML=`<div class="snum">${String(i+1).padStart(2,'0')}</div>
+      <div class="sinf">
+        <div class="sname">${s.name||'---'}</div>
+        <div class="smeta">${s.position||''}</div>
+        <div class="stags">${sk}<span class="sbdg">ACTIVE</span></div>
+      </div>`;
+    ul.appendChild(el);
+  });
+}
+
+/* ─── SELECT ─── */
+function doSelect(s,el){
+  current=s;
+  document.querySelectorAll('.si').forEach(e=>e.classList.remove('sel'));
+  if(el)el.classList.add('sel');
+  renderProfile(s);startScan(s);
+  document.getElementById('bname').textContent=s.name||'--';
+}
+
+/* ─── BIO OVERLAY SEQUENCE ─── */
+function resetBioOverlay(){
+  clearTimeout(bioTmr);
+  const hud=document.getElementById('hud');
+  const fb=document.getElementById('facebox');
+  const sl=document.getElementById('scanline');
+  const st=document.getElementById('hud-status');
+  const mt=document.getElementById('hud-match');
+  const cb=document.getElementById('confbar');
+  const cf=document.getElementById('conffill');
+
+  hud.classList.remove('scanning','matched');
+  fb.classList.remove('visible');
+  sl.style.animation='none';
+  st.classList.remove('vis');
+  mt.classList.remove('vis');
+  cb.classList.remove('vis');
+  cf.style.width='0%';
+
+  ['pt-leye','pt-reye','pt-nose','pt-mth','pt-chin',
+   'lb-leye','lb-reye','lb-nose','lb-mth'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.remove('visible');
+  });
+  document.getElementById('pcap-r').textContent='CONF: --';
+}
+
+function runBioSequence(){
+  resetBioOverlay();
+  const hud=document.getElementById('hud');
+  const fb=document.getElementById('facebox');
+  const sl=document.getElementById('scanline');
+  const st=document.getElementById('hud-status');
+  const mt=document.getElementById('hud-match');
+  const cb=document.getElementById('confbar');
+  const cf=document.getElementById('conffill');
+
+  // Phase 1: Start scanning
+  hud.classList.add('scanning');
+  void sl.offsetWidth; sl.style.animation='';
+  st.textContent='■ SCANNING BIOMETRICS';
+  st.classList.add('vis');
+
+  // Phase 2: Face box appears at 1.5s
+  bioTmr=setTimeout(()=>{ fb.classList.add('visible'); },1500);
+
+  // Phase 3: Bio points appear one by one
+  const pts=['pt-leye','pt-reye','pt-nose','pt-mth','pt-chin'];
+  const lbs=['lb-leye','lb-reye','lb-nose','lb-mth'];
+  pts.forEach((id,i)=>{
+    setTimeout(()=>{
+      const el=document.getElementById(id);
+      if(el)el.classList.add('visible');
+    }, 2000+i*280);
+  });
+  lbs.forEach((id,i)=>{
+    setTimeout(()=>{
+      const el=document.getElementById(id);
+      if(el)el.classList.add('visible');
+    }, 2400+i*280);
+  });
+
+  // Phase 4: Match confirmed at 4.5s
+  setTimeout(()=>{
+    hud.classList.remove('scanning');
+    hud.classList.add('matched');
+    st.textContent='✓ BIOMETRICS CONFIRMED';
+    mt.classList.add('vis');
+    cb.classList.add('vis');
+    setTimeout(()=>{ cf.style.width='99.7%'; },100);
+    document.getElementById('pcap-r').textContent='CONF: 99.7%';
+  }, 4500);
+}
+
+/* ─── PROFILE ─── */
+function renderProfile(s){
+  const idx=subjects.indexOf(s)+1;
+
+  document.getElementById('wno').textContent=`#${String(idx).padStart(5,'0')} // ${(s.name||'').toUpperCase()}`;
+  document.getElementById('hdpt').textContent=s.department||'--';
+  document.getElementById('his').textContent=s.dob||'--';
+  document.getElementById('hex').textContent=(s.dob||'').replace(/^(\d{4})/,y=>parseInt(y)+10)||'--';
+  document.getElementById('fpid').textContent=`PRINT ID/${String(idx).padStart(2,'0')}`;
+  document.getElementById('fpzoom').textContent=`0${idx}.${210+idx*7}`;
+  document.getElementById('fpxy').innerHTML=`LAT: ${(37.5+Math.random()*.4).toFixed(3)}<br>LNG: ${(126.9+Math.random()*.4).toFixed(3)}<br>ALT: ${Math.floor(Math.random()*80+10)}M`;
+  document.getElementById('pcap').textContent=`PHOTO: ${s.dob||'--'}`;
+  document.getElementById('hud-ts').textContent=new Date().toTimeString().slice(0,8);
+
+  // Photo
+  const pph=document.getElementById('pph'), pimg=document.getElementById('pimg');
+  pimg.src=`./${idx}.png`;
+  pimg.onload=()=>{ pph.style.display='none'; pimg.style.display='block'; runBioSequence(); };
+  pimg.onerror=()=>{ pph.style.display='flex'; pimg.style.display='none'; resetBioOverlay(); };
+  pph.style.display='flex'; pimg.style.display='none';
+
+  // Randomize bio label values per subject
+  const seed=s.name.charCodeAt(0);
+  ['lb-leye','lb-reye','lb-nose','lb-mth'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const labels=[['EYE_L','EYE_R','NOSE','MOUTH'][i]];
+    const val=(0.85+((seed*(i+1)*17)%100)/700).toFixed(3);
+    el.innerHTML=`${labels[0]}<br>${val}`;
+  });
+
+  // Parse
+  const hist=(s.history||'').split(',').map(h=>{const[p,pl,r]=h.trim().split(':');return{p,pl,r};}).filter(h=>h.p);
+  const projs=(s.projects||'').split(',').map(p=>p.trim()).filter(Boolean);
+  const skills=(s.skills||'').split(',').map(sk=>sk.trim()).filter(Boolean);
+
+  document.getElementById('icol').innerHTML=`
+    <div class="bignm">${(s.name||'N/A').toUpperCase()}<span>${(s.position||'').toUpperCase()}</span></div>
+
+    <div class="fg">
+      <div class="fc"><div class="fl">DOB</div><div class="fv">${s.dob||'--'}</div></div>
+      <div class="fc"><div class="fl">LIC. CLASS</div><div class="fv em">R&D-A</div></div>
+      <div class="fc"><div class="fl">NATIONALITY</div><div class="fv em">${s.nationality||'--'}</div></div>
+      <div class="fc"><div class="fl">HEIGHT</div><div class="fv">${s.height||'--'}CM</div></div>
+      <div class="fc"><div class="fl">EXPERIENCE</div><div class="fv am">${s.years_exp||'0'}YRS</div></div>
+      <div class="fc"><div class="fl">STATUS</div><div class="fv rd blr">● ACTIVE</div></div>
+      <div class="fc s3"><div class="fl">DEPARTMENT</div><div class="fv em">${s.department||'--'}</div></div>
+      <div class="fc s3"><div class="fl">CONTACT</div><div class="fv">${s.contact||'--'}</div></div>
+    </div>
+
+    <div class="sh"><div class="sh-t">MISCELLANEOUS / STATE SPECIFIC INFORMATION</div><div class="sh-l"></div></div>
+    <div class="mbk">
+      <div class="mc"><div class="fl">TYPE</div><div class="fv" style="font-size:12px">RESEARCHER</div></div>
+      <div class="mc"><div class="fl">DESCRIPTION</div><div class="fv" style="font-size:11px;color:var(--tx3);font-family:var(--mono);font-weight:400">${(s.notes||'').slice(0,120)}</div></div>
+      <div class="mc"><div class="fl">LIC</div><div class="fv" style="font-size:12px">NON-COMM</div></div>
+      <div class="mc"><div class="fl">LIC STATUS</div><div class="fv em" style="font-size:12px">VALID</div></div>
+    </div>
+
+    <div class="sh"><div class="sh-t">CAREER HISTORY</div><div class="sh-l"></div><div class="sh-e">RECORDS: ${hist.length}</div></div>
+    <table class="ht">
+      <thead><tr><th>PERIOD</th><th>ORGANIZATION</th><th>ROLE / POSITION</th><th>NO</th></tr></thead>
+      <tbody>${hist.map((h,i)=>`<tr>
+        <td class="dt">${h.p||'--'}</td>
+        <td class="tp">${h.pl||'--'}</td>
+        <td>${h.r||'--'}</td>
+        <td class="cd">${String(i+1).padStart(2,'0')}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+
+    <div class="sh"><div class="sh-t">NOTES</div><div class="sh-l"></div></div>
+    <div style="font-size:11px;color:var(--tx2);border-left:2px solid var(--g1);padding:4px 10px;line-height:1.6;font-style:italic">${s.notes||'NO ADDITIONAL NOTES.'}</div>
+
+    <div class="sh"><div class="sh-t">PROJECTS</div><div class="sh-l"></div><div class="sh-e">COUNT: ${projs.length}</div></div>
+    ${projs.map((p,i)=>`<div class="chg"><div class="chn">${String(i+1).padStart(2,'0')}.</div><div class="cht">${p}</div></div>`).join('')}
+
+    <div class="sh"><div class="sh-t">TECHNICAL COMPETENCIES</div><div class="sh-l"></div></div>
+    <div class="skc">${skills.map((sk,i)=>`<div class="skt ${i<3?'p':''}">${sk}</div>`).join('')}</div>
+  `;
+}
+
+/* ─── FP CANVAS ─── */
+function drawFP(s){
+  const canvas=document.getElementById('fpc');
+  const W=canvas.offsetWidth,H=canvas.offsetHeight;
+  if(!W||!H)return;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const hOff=22;
+
+  ctx.fillStyle='#030508';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(20,44,54,.4)';ctx.lineWidth=.5;
+  for(let x=0;x<W;x+=10){ctx.beginPath();ctx.moveTo(x,hOff);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=hOff;y<H;y+=10){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  const seed=s?s.name.charCodeAt(0)*1.3:60;
+  const cx=W/2-12,cy=(H+hOff)/2+6;
+
+  for(let i=0;i<22;i++){
+    const t=i/22;
+    const rx=10+i*9+Math.sin(i*.9+seed*.02)*5;
+    const ry=8+i*7+Math.cos(i*.8+seed*.02)*4;
+    ctx.save();ctx.translate(cx,cy);ctx.rotate((Math.PI/9)*Math.sin(i*.25+seed*.005));
+    ctx.beginPath();ctx.ellipse(0,0,rx,ry,0,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(46,136,170,${.07+t*.16})`;ctx.lineWidth=.8;ctx.stroke();
+    ctx.restore();
+  }
+
+  const pts=[];
+  for(let i=0;i<16;i++){
+    const a=(i/16)*Math.PI*2;
+    const r=58*(0.38+Math.sin(i*seed*.007)*.35+.27);
+    pts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);
+  }
+  for(let i=0;i<7;i++){
+    const a=(i/7)*Math.PI*2+.4;
+    pts.push([cx+22*Math.cos(a),cy+17*Math.sin(a)]);
+  }
+
+  ctx.strokeStyle='rgba(46,136,170,.55)';ctx.lineWidth=.6;
+  for(let i=0;i<pts.length;i++){
+    for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i][0]-pts[j][0],dy=pts[i][1]-pts[j][1],d=Math.sqrt(dx*dx+dy*dy);
+      if(d<82){ctx.beginPath();ctx.moveTo(pts[i][0],pts[i][1]);ctx.lineTo(pts[j][0],pts[j][1]);ctx.stroke();}
+    }
+  }
+  pts.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fillStyle='rgba(80,176,204,.85)';ctx.fill();});
+
+  ctx.strokeStyle='rgba(46,136,170,.6)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx-8,cy);ctx.lineTo(cx+8,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy-8);ctx.lineTo(cx,cy+8);ctx.stroke();
+
+  const bx=W-54,by=hOff+6,bl=7;
+  ctx.strokeStyle='rgba(46,136,170,.5)';ctx.lineWidth=1;
+  [[bx,by,1,1],[bx+44,by,-1,1],[bx,by+32,1,-1],[bx+44,by+32,-1,-1]].forEach(([xx,yy,sx,sy])=>{
+    ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx+sx*bl,yy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx,yy+sy*bl);ctx.stroke();
+  });
+
+  ctx.fillStyle='rgba(46,136,170,.28)';ctx.font='5.5px Share Tech Mono,monospace';
+  ['SCANNED: 2048','MATCH: 99.7%','DPI: 500','QUALITY: HI','NBIS-3'].forEach((t,i)=>{ctx.fillText(t,W-52,hOff+12+i*9);});
+
+  const sw=((fpPhase-hOff)%(H-hOff))+hOff;
+  const gd=ctx.createLinearGradient(0,sw-12,0,sw+12);
+  gd.addColorStop(0,'rgba(46,136,170,0)');gd.addColorStop(.5,'rgba(46,136,170,.28)');gd.addColorStop(1,'rgba(46,136,170,0)');
+  ctx.fillStyle=gd;ctx.fillRect(0,sw-12,W,24);
+
+  try{const id=ctx.getImageData(0,hOff,W,H-hOff),d=id.data;for(let i=0;i<d.length;i+=16){const n=(Math.random()-.5)*4;d[i]+=n;d[i+1]+=n;d[i+2]+=n;}ctx.putImageData(id,0,hOff);}catch(e){}
+}
+
+function animFP(s){
+  if(fpRaf)cancelAnimationFrame(fpRaf);
+  const H=document.getElementById('fps').offsetHeight||210;
+  function loop(){fpPhase+=1.5;if(fpPhase>H)fpPhase=22;drawFP(s);fpRaf=requestAnimationFrame(loop);}
+  loop();
+}
+
+/* ─── SCAN LOG ─── */
+function addLog(type,msg){
+  const el=document.getElementById('slog'),ts=new Date().toTimeString().slice(0,8);
+  const d=document.createElement('div');d.className='ll '+type;d.textContent=`[${ts}] ${msg}`;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+
+function startScan(s){
+  clearInterval(scanTmr);
+  document.getElementById('slog').innerHTML='';
+  document.getElementById('pf').style.width='0';
+  document.getElementById('sst').textContent='■ SCANNING';
+  document.getElementById('idrw').innerHTML='';
+  animFP(s);
+  const msgs=[
+    ['info','INITIALIZING BIOMETRIC SCAN...'],
+    ['ok',`SUBJECT: ${s.name.toUpperCase()}`],
+    ['ok',`DEPT: ${s.department}`],
+    ['info','FACIAL LANDMARK DETECTION...'],
+    ['ok','MINUTIAE: '+Math.floor(Math.random()*40+65)+' POINTS'],
+    ['info','CAREER DB CROSS-REFERENCE...'],
+    ['ok',`HISTORY: ${(s.history||'').split(',').length} RECORDS`],
+    ['info','SKILLS MATRIX ANALYSIS...'],
+    ['ok','COMPETENCY: VERIFIED'],
+    ['info','PROJECT ARCHIVE SCAN...'],
+    ['ok',`PROJECTS: ${(s.projects||'').split(',').length} ENTRIES`],
+    ['info','IDENTITY CONFIRMATION...'],
+    ['ok','MATCH CONF: 99.7% // ✓ POSITIVE ID'],
+  ];
+  let step=0;
+  scanTmr=setInterval(()=>{
+    if(step<msgs.length){
+      addLog(msgs[step][0],msgs[step][1]);
+      document.getElementById('pf').style.width=`${Math.round((step+1)/msgs.length*100)}%`;
+      step++;
+    }else{
+      clearInterval(scanTmr);
+      document.getElementById('sst').textContent='● COMPLETE';
+      renderID(s);
+    }
+  },210);
+}
+
+function renderID(s){
+  const exp=parseInt(s.years_exp)||0;
+  const rows=[
+    ['SUBJECT ID',`GCD-${Math.floor(Math.random()*90000+10000)}`,'hi'],
+    ['CLEARANCE','LVL-'+Math.min(5,Math.floor(exp/3)+1),'hi'],
+    ['RISK','MINIMAL','hi'],
+    ['SKILLS',(s.skills||'').split(',').length,''],
+    ['EXP',exp+'Y',''],
+    ['NATION',s.nationality||'--',''],
+    ['HT',s.height+'CM',''],
+    ['AUTH','CONFIRMED','hi'],
+    ['CONF','99.7%','hi'],
+    ['PRINT QUAL','HIGH','am'],
+    ['SCAN DPI','500',''],
+    ['ALGO','NBIS-3',''],
+  ];
+  document.getElementById('idrw').innerHTML=rows.map(([l,v,c])=>
+    `<div class="ir"><span class="lb">${l}</span><span class="vl ${c}">${v}</span></div>`).join('');
+}
+
+/* ─── SEARCH ─── */
+document.getElementById('srch').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  if(!q){renderList(subjects);return;}
+  renderList(subjects.filter(s=>['name','position','department','skills'].some(k=>(s[k]||'').toLowerCase().includes(q))));
+});
+
+/* ─── CLOCK ─── */
+function tick(){
+  const n=new Date();
+  document.getElementById('clk').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');
+  document.getElementById('hud-ts').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');
+}
+setInterval(tick,1000);tick();
+document.getElementById('sid').textContent='SN-'+Math.random().toString(36).slice(2,8).toUpperCase();
+
+window.addEventListener('resize',()=>{ if(current)drawFP(current); });
+
+/* ─── INIT ─── */
+subjects=parseCSV(CSV);
+renderList(subjects);
+addLog('ok','GCPD DATABASE NODE ONLINE');
+addLog('info',`${subjects.length} SUBJECT RECORDS LOADED`);
+addLog('info','AWAITING SUBJECT SELECTION...');
+drawFP(null);
+setTimeout(()=>{ const f=document.querySelector('.si'); if(f)f.click(); },600);
+</script>
+</body>
+</html>
