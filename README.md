@@ -7,7 +7,7 @@
 
 ## 📸 Preview
 
-![preview](preview.png)
+![Demo](demo.gif)
 
 ---
 
